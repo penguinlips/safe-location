@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crime Rate Prediction Results</title>
+    <style>
+        .progress {
+            height: 25px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            background-color: orange;
+            border-radius: 5px;
+        }
+
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: white;
+            text-align: center;
+            background-color: red;
+            transition: width 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+    <h1>Crime Rate Prediction</h1>
+    <form method="POST" action="/">
+        <label for="latitude">Latitude:</label>
+        <input type="number" step="any" name="latitude" required>
+        <br>
+        <label for="longitude">Longitude:</label>
+        <input type="number" step="any" name="longitude" required>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+
+    <h1>Crime Rate Prediction Results</h1>
+    <div class="progress">
+        <div id="crime_rate_bar" class="progress-bar" role="progressbar" style="width: {{ crime_rate*10 }}%; {% if crime_rate < 5 %}background-color: yellowgreen;{% elif crime_rate < 6 %}background-color: blue;{% else %}background-color: red;{% endif %}" aria-valuenow="{{ crime_rate*10 }}" aria-valuemin="0" aria-valuemax="100">
+            <span style="font-weight: bold; color: white;">{{ crime_rate }}</span>
+        </div>
+    </div>
+
+    <script>
+        var crime_rate = parseFloat(document.getElementById('crime_rate_bar').textContent);
+        var bar = document.getElementById('crime_rate_bar');
+        var width = 0;
+        var id = setInterval(frame, 10);
+        function frame() {
+            if (width >= crime_rate * 10) {
+                clearInterval(id);
+            } else {
+                width += 0.1;
+                bar.style.width = width + '%';
+                bar.setAttribute('aria-valuenow', width);
+            }
+        }
+    </script>
+
+    <h2>Crime Rate by Location Scatter Plot</h2>
+    <img src="{{ url_for('static', filename='scatter_plot.png') }}" alt="Scatter plot of crime rate by location">
+    <h2>Crime Rate by Location Bar Chart</h2>
+    <img src="{{ url_for('static', filename='bar_chart.png') }}" alt="Bar chart of crime rate by location">
+</body>
+</html>
